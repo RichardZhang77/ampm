@@ -6,7 +6,7 @@ import fs from "fs/promises";
 import path from "path";
 
 const qaPath = path.join(process.cwd(), "app/api/_data/qa.json");
-const VOICE_ID = "CwhRBWXzGAHq8TQ4Fs17"; // ← replace with your ElevenLabs voice ID
+const VOICE_ID = "CwhRBWXzGAHq8TQ4Fs17";
 
 async function readQA() {
   const buf = await fs.readFile(qaPath, "utf8");
