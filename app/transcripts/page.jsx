@@ -19,12 +19,14 @@ export default function TranscriptsPage() {
       ) : (
         transcripts.map((t, i) => (
           <div key={i} className="border p-4 mb-2 rounded">
-            <p><b>Conversation ID:</b> {t.conversation_id}</p>
-            {t.messages?.map((m, j) => (
-              <p key={j}>
-                <b>{m.role}:</b> {m.text}
-              </p>
-            ))}
+         <p><b>Conversation ID:</b> {t.conversation_id || "N/A"}</p>
+
+{/* Handle both "messages" or "transcript" */}
+{(t.messages || t.transcript)?.map((m, j) => (
+  <p key={j}>
+    <b>{m.role || m.speaker}:</b> {m.text}
+  </p>
+))}
           </div>
         ))
       )}
