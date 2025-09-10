@@ -5,9 +5,16 @@ export default function TranscriptsPage() {
   const [transcripts, setTranscripts] = useState([]);
 
   useEffect(() => {
-    fetch("/api/webhook")
-      .then((res) => res.json())
-      .then((data) => setTranscripts(data));
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/webhook");
+        const data = await res.json();
+        setTranscripts(data);
+      } catch (err) {
+        console.error("❌ Error fetching transcripts:", err);
+      }
+    }
+    fetchData();
   }, []);
 
   return (
@@ -18,15 +25,29 @@ export default function TranscriptsPage() {
         <p>No transcripts yet...</p>
       ) : (
         transcripts.map((t, i) => (
-          <div key={i} className="border p-4 mb-2 rounded">
-         <p><b>Conversation ID:</b> {t.conversation_id || "N/A"}</p>
+          <div
+            key={i}
+            className="border p-4 mb-2 rounded bg-white shadow space-y-2"
+          >
+            {/* Try multiple ID fields */}
+            <p>
+              <b>Conversation ID:</b>{" "}
+              {t.conversation_id || t.call_id || t.id || "N/A"}
+            </p>
 
-{/* Handle both "messages" or "transcript" */}
-{(t.messages || t.transcript)?.map((m, j) => (
-  <p key={j}>
-    <b>{m.role || m.speaker}:</b> {m.text}
-  </p>
-))}
+            {/* Try messages or transcript arrays */}
+            {(t.messages || t.transcript)?.map((m, j) => (
+              <p key={j}>
+                <b>{m.role || m.speaker || "unknown"}:</b> {m.text}
+              </p>
+            ))}
+
+            {/* Fallback: show raw JSON */}
+            {!t.messages && !t.transcript && (
+              <pre className="bg-gray-100 p-2 rounded text-sm overflow-x-auto">
+                {JSON.stringify(t, null, 2)}
+              </pre>
+            )}
           </div>
         ))
       )}
